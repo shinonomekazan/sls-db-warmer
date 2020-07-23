@@ -1,15 +1,15 @@
-import { RDSDataService, AWSError } from "aws-sdk";
+import { RDSDataService, AWSError, Credentials } from "aws-sdk";
 
 export async function warmDatabases(databaseCreds: {
 	[databaseName: string]: {
 		secretArn: string;
 		resourceArn: string;
 		region: string;
+		credentials?: Credentials;
 	};
 }): Promise<void> {
 	const queryDatabasePromises = Object.keys(databaseCreds).map((database) => {
-		const { region, secretArn, resourceArn } = databaseCreds[database];
-		const rdsdataservice = new RDSDataService({ region, apiVersion: "latest" });
+		const { region, secretArn, resourceArn, credentials } = databaseCreds[database];
 		const requestParams: RDSDataService.ExecuteStatementRequest = {
 			database,
 			resourceArn,
@@ -17,6 +17,10 @@ export async function warmDatabases(databaseCreds: {
 			sql: "SELECT 1",
 		};
 
+		const rdsDataServiceConfig: RDSDataService.ClientConfiguration = { region, apiVersion: "latest" };
+		if (credentials) rdsDataServiceConfig.credentials = credentials;
+
+		const rdsdataservice = new RDSDataService(rdsDataServiceConfig);
 		return rdsdataservice
 			.executeStatement(requestParams)
 			.promise()
