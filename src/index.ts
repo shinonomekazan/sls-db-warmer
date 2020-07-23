@@ -1,11 +1,14 @@
-import { RDSDataService, AWSError, Credentials } from "aws-sdk";
+import { RDSDataService, AWSError } from "aws-sdk";
 
 export async function warmDatabases(databaseCreds: {
 	[databaseName: string]: {
 		secretArn: string;
 		resourceArn: string;
 		region: string;
-		credentials?: Credentials;
+		credentials?: {
+			accessKeyId: string;
+			secretAccessKey: string;
+		};
 	};
 }): Promise<void> {
 	const queryDatabasePromises = Object.keys(databaseCreds).map((database) => {
