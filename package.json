@@ -1,8 +1,9 @@
 {
   "name": "sls-db-warmer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "build/index.js",
+  "repository": "https://github.com/shinonomekazan/sls-db-warmer",
   "scripts": {
     "build": "tsc"
   },
